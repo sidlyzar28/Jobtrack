@@ -4,15 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jobtrack.jobtrack.dto.JobStats;
 import com.jobtrack.jobtrack.entity.ApplicationStatusHistory;
 import com.jobtrack.jobtrack.entity.Job;
 import com.jobtrack.jobtrack.entity.JobStatus;
 import com.jobtrack.jobtrack.repository.ApplicationStatusHistoryRepository;
-import com.jobtrack.jobtrack.repository.JobRepository;
-
-
+  import com.jobtrack.jobtrack.repository.JobRepository;
 
 @Service
 public class JobService {
@@ -109,9 +108,15 @@ public class JobService {
             .orElse(null);
 
 }
-    public void deleteJob(Long id) {
-        jobRepository.deleteById(id);
-    }
+    @Transactional
+public void deleteJob(Long id) {
+    Job job = jobRepository.findById(id)
+            .orElseThrow(() ->
+                    new IllegalArgumentException("Job not found"));
+
+    historyRepository.deleteByJob(job);
+    jobRepository.delete(job);
+}
 
     public JobStats getJobStats() {
 

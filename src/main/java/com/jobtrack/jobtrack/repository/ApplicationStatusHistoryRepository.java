@@ -11,4 +11,6 @@ public interface ApplicationStatusHistoryRepository
         extends JpaRepository<ApplicationStatusHistory, Long> {
 
     List<ApplicationStatusHistory> findByJobOrderByChangedAtAsc(Job job);
+
+    void deleteByJob(Job job);
 }
